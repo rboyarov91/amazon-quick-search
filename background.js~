@@ -1,0 +1,95 @@
+	
+if (!localStorage['notfirst'])
+{
+	localStorage["defsite"]="g";
+	localStorage["defsite2"]="th";
+	localStorage["siteid"]="s1";
+	localStorage["siteid2"]="s21";
+	localStorage['notfirst'] = '1';
+}
+
+chrome.extension.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    /*var selectedText=(window.getSelection?window.getSelection():document.getSelection?document.getSelection():document.selection.createRange().text);
+ 	if(!selectedText || selectedText=="")
+	    if(document.activeElement.selectionStart)
+	     	selectedText = document.activeElement.value.substring(document.activeElement.selectionStart.document.activeElement.selectionEnd);
+	    openTabs(selectedText);*/
+  });
+
+chrome.omnibox.onInputEntered.addListener(
+function(text)
+{
+	var url;
+	if(text.indexOf("\\t")!=-1)
+	{
+		text=text.replace("\\t","");
+		if(localStorage["defsite2"]=="th")
+			url = "http://thesaurus.com/browse/"+text;
+		else if(localStorage["defsite2"]=="mw")
+			url = "http://www.merriam-webster.com/thesaurus/"+text; 						      
+		else if(localStorage["defsite2"]=="co")
+			url = "http://www.collinsdictionary.com/dictionary/english-thesaurus/"+text;
+		chrome.tabs.create({"url":url, "selected":true});
+		return;
+	}
+
+	if(localStorage["defsite"]=="g")
+		url = "https://www.google.co.in/search?hl=en&q="+text+"&tbs=dfn:1";
+	else if(localStorage["defsite"]=="mw")
+		url = "http://www.merriam-webster.com/dictionary/"+text; 						      
+	else if(localStorage["defsite"]=="di")
+		url = "http://dictionary.reference.com/browse/"+text; 	
+	else if(localStorage["defsite"]=="co")					      
+		url = "http://www.collinsdictionary.com/dictionary/english/"+text;
+	else if(localStorage["defsite"]=="tfd")					      
+		url = "http://www.thefreedictionary.com/"+text;
+	chrome.tabs.create({"url":url, "selected":true});
+
+});
+
+function openTabs(str)
+{
+	var url;
+	if(localStorage["defsite"]=="g")
+		url = " https://www.google.co.in/search?hl=en&q="+str+"&tbs=dfn:1";
+	else if(localStorage["defsite"]=="mw")
+		url = "http://www.merriam-webster.com/dictionary/"+str; 						      
+	else if(localStorage["defsite"]=="di")
+		url = "http://dictionary.reference.com/browse/"+str; 	
+	else if(localStorage["defsite"]=="co")					      
+		url = "http://www.collinsdictionary.com/dictionary/english/"+str;
+	else if(localStorage["defsite"]=="tfd")					      
+		url = "http://www.thefreedictionary.com/"+str;
+
+	chrome.tabs.create({"url":url, "selected":false});
+}
+
+function openTabs2(str)
+{
+	var  url;
+	if(localStorage["defsite2"]=="th")
+		url = "http://thesaurus.com/browse/"+str;
+	else if(localStorage["defsite2"]=="mw")
+		url = "http://www.merriam-webster.com/thesaurus/"+str; 						      
+	else if(localStorage["defsite2"]=="co")
+		url = "http://www.collinsdictionary.com/dictionary/english-thesaurus/"+str;
+	chrome.tabs.create({"url":url, "selected":true});
+	return;
+}
+
+function clik(info)
+{
+	openTabs(info.selectionText);
+};
+
+function clik2(info)
+{
+	openTabs2(info.selectionText);
+};
+
+var title = "Define ";
+var context = "selection";
+var id = chrome.contextMenus.create({"title": title+"'"+'%s'+"'", "contexts":[context], "onclick":clik});
+var id2 = chrome.contextMenus.create({"title": title+"'"+'%s'+"'", "contexts":[context], "onclick":clik2});
+
